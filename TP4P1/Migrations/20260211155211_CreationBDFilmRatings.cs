@@ -24,8 +24,8 @@ namespace TP4P1.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     flm_titre = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     flm_resume = table.Column<string>(type: "text", nullable: true),
-                    flm_datesortie = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    flm_duree = table.Column<decimal>(type: "numeric", nullable: true),
+                    flm_datesortie = table.Column<DateTime>(type: "date", nullable: true),
+                    flm_duree = table.Column<decimal>(type: "numeric(3,0)", nullable: true),
                     flm_genre = table.Column<string>(type: "character varying(30)", maxLength: 30, nullable: true)
                 },
                 constraints: table =>

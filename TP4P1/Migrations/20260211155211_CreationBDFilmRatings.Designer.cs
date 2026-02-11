@@ -12,7 +12,7 @@ using TP4P1.Models.EntityFramework;
 namespace TP4P1.Migrations
 {
     [DbContext(typeof(FilmRatingsDBContext))]
-    [Migration("20260211152542_CreationBDFilmRatings")]
+    [Migration("20260211155211_CreationBDFilmRatings")]
     partial class CreationBDFilmRatings
     {
         /// <inheritdoc />
@@ -36,11 +36,11 @@ namespace TP4P1.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("FilmId"));
 
                     b.Property<DateTime?>("DateSortie")
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("date")
                         .HasColumnName("flm_datesortie");
 
                     b.Property<decimal?>("Duree")
-                        .HasColumnType("numeric")
+                        .HasColumnType("numeric(3,0)")
                         .HasColumnName("flm_duree");
 
                     b.Property<string>("Genre")
