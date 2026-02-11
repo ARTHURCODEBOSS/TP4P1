@@ -18,10 +18,10 @@ namespace TP4P1.Models.EntityFramework
         [Column("flm_resume")]
         public string? Resume { get; set; }
 
-        [Column("flm_datesortie")]
+        [Column("flm_datesortie", TypeName = "date")]
         public DateTime? DateSortie { get; set; }
 
-        [Column("flm_duree")]
+        [Column("flm_duree", TypeName = "numeric(3,0)")]
         public decimal? Duree { get; set; }
 
         [Column("flm_genre")]
@@ -31,6 +31,5 @@ namespace TP4P1.Models.EntityFramework
         [InverseProperty(nameof(Notation.FilmNote))]
         public virtual ICollection<Notation> NotesFilm { get; set; } = new List<Notation>();
     }
-
 
 }
