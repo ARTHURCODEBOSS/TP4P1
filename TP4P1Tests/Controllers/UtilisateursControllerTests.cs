@@ -1,23 +1,26 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TP4P1.Controllers;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TP4P1.Controllers;
+using TP4P1.Models.DataManager;
 using TP4P1.Models.EntityFramework;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using TP4P1.Models.Repository;
 
 namespace TP4P1.Controllers.Tests
 {
     [TestClass()]
     public class UtilisateursControllerTests
     {
+        private IDataRepository<Utilisateur> dataRepository;
+        
         private FilmRatingsDBContext context;
-
         public FilmRatingsDBContext Context
         {
             get { return context; }
@@ -26,14 +29,15 @@ namespace TP4P1.Controllers.Tests
 
         public UtilisateursControllerTests()
         {
-             Context= new FilmRatingsDBContext();
+            Context= new FilmRatingsDBContext();
+            dataRepository = new UtilisateurManager(context);
         }
 
 
         [TestMethod()]
         public void GetAllUtilisateursControllerTest()
         {
-            UtilisateursController controller = new UtilisateursController(Context);
+            UtilisateursController controller = new UtilisateursController(dataRepository);
             var result = controller.GetUtilisateurs();
             List<Utilisateur> usersControl = result.Result.Value.ToList();
 
@@ -47,7 +51,7 @@ namespace TP4P1.Controllers.Tests
         [TestMethod()]
         public void GetUtilisateursByIdControllerTest()
         {
-            UtilisateursController controller = new UtilisateursController(Context);
+            UtilisateursController controller = new UtilisateursController(dataRepository);
 
             Utilisateur users = controller.GetUtilisateurById(1).Result.Value;
             Utilisateur userContext = context.Utilisateurs.Find(1); 
@@ -59,7 +63,7 @@ namespace TP4P1.Controllers.Tests
         [TestMethod()]
         public void GetUtilisateursByIdControllerTestEchec()
         {
-            UtilisateursController controller = new UtilisateursController(Context);
+            UtilisateursController controller = new UtilisateursController(dataRepository);
 
             var result = controller.GetUtilisateurById(100).Result;
 
@@ -68,7 +72,7 @@ namespace TP4P1.Controllers.Tests
         [TestMethod()]
         public void GetUtilisateursByEmailControllerTest()
         {
-            UtilisateursController controller = new UtilisateursController(Context);
+            UtilisateursController controller = new UtilisateursController(dataRepository);
 
             var result = controller.GetUtilisateurByEmail("clilleymd@last.fm").Result.Value;
             Utilisateur userContext = context.Utilisateurs.FirstOrDefaultAsync(u => u.Mail == "clilleymd@last.fm").Result;
@@ -79,7 +83,7 @@ namespace TP4P1.Controllers.Tests
         [TestMethod()]
         public void GetUtilisateursByEmailControllerTestEchec()
         {
-            UtilisateursController controller = new UtilisateursController(Context);
+            UtilisateursController controller = new UtilisateursController(dataRepository);
 
             var result = controller.GetUtilisateurByEmail("kim@gmail.com").Result;
 
@@ -89,7 +93,7 @@ namespace TP4P1.Controllers.Tests
         [TestMethod]
         public void Postutilisateur_ModelValidated_CreationOK()
         {
-            UtilisateursController controller = new UtilisateursController(Context);
+            UtilisateursController controller = new UtilisateursController(dataRepository);
 
             // Arrange
             Random rnd = new Random();
@@ -120,7 +124,7 @@ namespace TP4P1.Controllers.Tests
         [TestMethod]
         public void Pututilisateur_ModelValidated_CreationOK()
         {
-            UtilisateursController controller = new UtilisateursController(Context);
+            UtilisateursController controller = new UtilisateursController(dataRepository);
             Utilisateur userAtester = context.Utilisateurs.First();
 
             Random rnd = new Random();
@@ -132,6 +136,34 @@ namespace TP4P1.Controllers.Tests
             
             Assert.AreEqual(userRecupere, userAtester, "Utilisateurs pas identiques");
         }
+
+        [TestMethod]
+        public void DeleteTestMethode()
+        {
+            UtilisateursController controller = new UtilisateursController(dataRepository);
+
+            Utilisateur user = new Utilisateur()
+            {
+                UtilisateurId = 20,
+                Nom = "MACHIN",
+                Prenom = "Luc",
+                Mobile = "0606070809",
+                Mail = "machin" + "@gmail.com",
+                Pwd = "Toto1234!",
+                Rue = "Chemin de Bellevue",
+                CodePostal = "74940",
+                Ville = "Annecy-le-Vieux",
+                Pays = "France",
+                Latitude = null,
+                Longitude = null
+            };
+            context.Utilisateurs.Add(user);
+
+            var result = controller.DeleteUtilisateur(20);
+
+            Assert.AreEqual(StatusCodes.Status204NoContent, ((NoContentResult)result.Result).StatusCode, "pas le meme statut");
+        }
+
 
 
     }
